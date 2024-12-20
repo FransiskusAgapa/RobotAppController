@@ -53,9 +53,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DemoLayout()
+                    DisplayApp()
                 }
             }
         }
     }
 }
+
+// TODO: Regularly update to Github 'main' branch using Terminal(local):
+//      git add .
+//      git commit -m "commit message here"
+//      git push origin main

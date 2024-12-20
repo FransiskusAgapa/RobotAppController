@@ -26,6 +26,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,26 +39,101 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.demorobocontrollerapp.ui.theme.DemoRoboControllerAppTheme
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
-const val BorderColor = 0xFF333333 // soft black
-const val TextColor = 0xFFF8F8F8 // off-white
-const val GripControlColor = 0xFFA3C8F2 // soft blue
-const val ElevationControlColor = 0xFFA8D5BA // soft green
+
+const val MonitorBgColor = 0xFF4B4F54// smoke gray
+const val MonitorBorderColor = 0xFF333333 // soft black
+//const val TextColor = 0xFFF8F8F8 // off-white
+const val TextColor = 0xFF212529 // dark gray
+const val ManipulatorBtnColor = 0xFF3498DB  // sky blue
+const val ElevationBtnColor = 0xFF1ABC9C // soft green
+const val NavigationBtnColor = 0xFFD3D3D3 // light gray
+val FontSize = 20.sp // better readability
+val ButtonWidth = 150.dp
+val ButtonHeight = 50.dp
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     DemoRoboControllerAppTheme {
-        DemoLayout()
+        DisplayApp()
+    }
+}
+
+@Composable // the whole app display
+fun DisplayApp() {
+    //
+    Column(
+        modifier = Modifier.fillMaxSize() // use the whole screen size
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth() // use allocated space as much as possible
+                .weight(1f) // take 1/3 of the vertical space
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                ShowMonitor(displayText = "")
+            }
+        }
+
+        // 'Manipulation' & 'Elevation' column
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            // 'Manipulation
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                ShowManipConsole()
+            }
+            // 'Elevation'
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                ShowElevPanel()
+            }
+        }
+
+        //
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                ShowNavPanel()
+            }
+        }
     }
 }
 
 @Composable
-fun DemoLayout() {
+fun ShowMonitor(displayText: String){
     Column(
+        // background
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray), // makes the column take up the full available space
+            .background(Color(MonitorBgColor)), // makes the column take up the full available space
         verticalArrangement = Arrangement.SpaceEvenly, // evenly spaces the header, main, and footer
         horizontalAlignment = Alignment.CenterHorizontally // centers horizontally (optional)
     ) {
@@ -65,249 +144,255 @@ fun DemoLayout() {
                 .weight(1f) // assign how much space vertically
                 .height(200.dp) // sets the height of the Box to 200dp
                 .padding(16.dp) // adds padding around the Box (inside space)
-                .border(2.dp, Color(BorderColor)) // to simulate a monitor border
-                .background(Color(0xFF4B4F54)),
-            contentAlignment = Alignment.Center
+                .border(2.dp, Color(MonitorBgColor)) // to simulate a monitor border
+                .background(Color(MonitorBgColor)),
+            contentAlignment = Alignment.Center // center content
         ) {
-            Text("Monitor",color= Color(TextColor))
+            Text(displayText, color = Color(TextColor))
         }
+    }
+}
 
-        // Grip Control Section
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            //.background(Color.LightGray),
-            contentAlignment = Alignment.Center
+@Composable // Show 'Manipulator' console ('Grab' and 'Release')
+fun ShowManipConsole(){
+//    Column{
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth() // makes the Box take up the full width of its parent container
+//                .padding(16.dp),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Text("Grip Control Section")
+//        }
+
+        Row(
+            modifier =
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly // ensures the buttons are spaced evenly){
         ) {
-            Spacer(modifier = Modifier.height(16.dp)) // space between
-            Column {
-                // TODO: Temporarily placed here
-                Box(
+            // 'Grab' btn
+            Box {
+                Button(
+                    onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(ManipulatorBtnColor), // Button background color (soft green)
+                        contentColor = Color(TextColor)
+                    ),
                     modifier = Modifier
-                        .fillMaxWidth() // makes the Box take up the full width of its parent container
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ){
-                    Text("Grip Control Section")
-                }
-
-                // Grab-Release
-                Row(
-                    modifier =
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly // ensures the buttons are spaced evenly){
+                        .border(2.dp, Color(ManipulatorBtnColor)) // border color
+                        .clip(CircleShape) // Make the button circular
+                        .width(ButtonWidth)
+                        .height(ButtonHeight)
                 ) {
-                    // 'Grab' btn
-                    Box {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(GripControlColor), // Button background color (soft green)
-                                contentColor = Color(TextColor)
-                            ),
-                            modifier = Modifier
-                                .border(
-                                    2.dp,
-                                    Color(BorderColor)
-                                ) // Border with the same color as the background
-                                .clip(CircleShape) // Make the button circular
-                        ) {
-                            Text("Grab")
-                            Icon(Icons.Default.AddCircle, contentDescription = "Grab")
-                        }
-                    }
-
-                    // 'Release' btn
-                    Box {
-                        Button(onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(GripControlColor), // Button background color (soft green)
-                                contentColor = Color(TextColor)
-                            ), modifier = Modifier
-                                .border(
-                                    2.dp,
-                                    Color(BorderColor)
-                                ) // Border with the same color as the background
-                                .clip(CircleShape) // Make the button circular
-                        ) {
-                            Text("Release")
-                            Icon(Icons.Default.CheckCircle, contentDescription = "Release")
-                        }
-                    }
+                    Text("Grab ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Icon(Icons.Default.AddCircle, contentDescription = "Grab")
                 }
+            }
 
-                // TODO: Elevation Control Section
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth() // makes the Box take up the full width of its parent container
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ){
-                    Text("Elevation Control Section")
-                }
-
-                // Lift-Lower
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                ){
-                    // 'Lift' btn
-                    Box {
-                        Button(onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(ElevationControlColor), // button background color (purple)
-                                contentColor = Color.White // Text color (white)
-                            ), modifier = Modifier
-                                .border(
-                                    2.dp,
-                                    Color(BorderColor)
-                                ) // border with the same color as the background
-                                .clip(CircleShape) // Make the button circular
-                        ){
-                            Text("Lift")
-                            Icon(
-                                Icons.Default.KeyboardArrowUp,
-                                contentDescription = "Lift")
-                        }
-                    }
-
-                    // 'Lower' btn
-                    Box {
-                        Button(onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(ElevationControlColor), // button background color (soft green)
-                                contentColor = Color(TextColor)
-                            ), modifier = Modifier
-                                .border(
-                                    2.dp, Color(BorderColor)
-                                ) // border with the same color as the background
-                                .clip(CircleShape) // Make the button circular
-                        ) {
-                            Text("Lower")
-                            Icon(
-                                Icons.Default.KeyboardArrowDown,
-                                contentDescription = "Lower"
-                            )
-                        }
-                    }
-
+            // 'Release' btn
+            Box {
+                Button(
+                    onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(ManipulatorBtnColor), // Button background color (soft green)
+                        contentColor = Color(TextColor)
+                    ), modifier = Modifier
+                        .border(2.dp, Color(ManipulatorBtnColor)) // Border color
+                        .clip(CircleShape) // Make the button circular
+                        .width(ButtonWidth)
+                        .height(ButtonHeight)
+                ) {
+                    Text("Release ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Icon(Icons.Default.CheckCircle, contentDescription = "Release")
                 }
             }
         }
+}
 
-        // Directional Control button
-        Box(
+@Composable // show 'Elevation' panel ('Lift' and 'Lower')
+fun ShowElevPanel(){
+    Column{
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth() // makes the Box take up the full width of its parent container
+//                .padding(16.dp),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Text("Elevation Control Section")
+//        }
+
+        // Lift-Lower
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            //.background(Color.Gray),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(), // makes the Row take up the full width of its parent container
-                horizontalArrangement = Arrangement.SpaceEvenly, // evenly space out the two Box elements
-                verticalAlignment = Alignment.CenterVertically // center the content vertically within the Row
-            ) {
-                // Directional console
-                Box(
-                    modifier = Modifier
-                        .size(100.dp), // assign a fixed size to the Box (adjusted from 'fillMaxWidth')
-                    contentAlignment = Alignment.Center // center the content (Text) inside the Box
+            // 'Lift' btn
+            Box {
+                Button(
+                    onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(ElevationBtnColor), // button background color (purple)
+                        contentColor = Color(TextColor) // Text color (white)
+                    ), modifier = Modifier
+                        .border(
+                            2.dp,
+                            Color(ElevationBtnColor)
+                        ) // border with the same color as the background
+                        .clip(CircleShape) // Make the button circular
+                        .width(ButtonWidth)
+                        .height(ButtonHeight)
+//                        .fillMaxWidth() // takes space too much
                 ) {
-                    Text("Directional Control")
-                    // TODO: Practice how to make console button then apply here
-                    //GameConsole()
+                    Text("Lift ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Icon(
+                        Icons.Default.KeyboardArrowUp,
+                        contentDescription = "Lift"
+                    )
+                }
+            }
+
+            // 'Lower' btn
+            Box {
+                Button(
+                    onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(ElevationBtnColor), // button background color (soft green)
+                        contentColor = Color(TextColor)
+                    ), modifier = Modifier
+                        .border(2.dp, Color(ElevationBtnColor)) // border color
+                        .clip(CircleShape) // Make the button circular
+                        .width(150.dp)
+                        .height(50.dp)
+//                        .fillMaxWidth()
+                ) {
+                    Text("Lower ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Lower"
+                    )
                 }
             }
         }
     }
 }
 
-// TODO: Migrate 'Monitor' code here
-//@Composable
-//fun ShowMonitor(){
-//}
-
-// TODO: Migrate 'Grip Control' here
-//@Composable
-//fun ShowGripControl(){
-//}
-
-// TODO: Migrate 'Elevation Control' here
-//@Composable
-//fun ShowElevationControl(){
-//}
-
-// TODO: Update layout & positioning
-// Composable function for the game console (buttons)
-@Composable
-fun GameConsole() {
-    // Accessing the context within a composable function
-    val context = LocalContext.current
-
+// TODO: figure out how text can be display into monitor when btn pressed
+@Composable // show 'Navigation' panel ('Left','Top','Bottom','Right')
+fun ShowNavPanel(){
+    // state to hold value to be display
+    var displayText by remember { mutableStateOf("") }
     Column(
-        modifier = Modifier
-            .fillMaxSize()  // Make the column fill the screen
-            .wrapContentSize(Alignment.Center)  // Center the column within the screen
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Row for the first set of buttons (left, up, right)
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            DirectionalButton("←") {
-                // Show toast when left button is pressed
-                Toast.makeText(context, "Left pressed", Toast.LENGTH_SHORT).show()
-            }
-            DirectionalButton("↑") {
-                // Show toast when up button is pressed
-                Toast.makeText(context, "Up pressed", Toast.LENGTH_SHORT).show()
-            }
-            DirectionalButton("→") {
-                // Show toast when right button is pressed
-                Toast.makeText(context, "Right pressed", Toast.LENGTH_SHORT).show()
+        Text(text = displayText)
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ){
+        // 'left' btn
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            contentAlignment = Alignment.Center // center content
+        ){
+            Button(
+                onClick = {
+                    displayText = "LEFT Button Clicked"
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(NavigationBtnColor), // button background color (soft green)
+                    contentColor = Color(TextColor)
+                ),
+                modifier = Modifier
+                    .width(ButtonWidth)
+                    .height(ButtonHeight)
+                    .padding(1.dp),
+            ) {
+                Text("← Left",fontSize = FontSize, fontWeight = FontWeight.Bold)
             }
         }
 
-        // Row for the second set of buttons (left, down, right)
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            DirectionalButton("←") {
-                // Show toast when left button is pressed
-                Toast.makeText(context, "Left pressed", Toast.LENGTH_SHORT).show()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.2f),
+            contentAlignment = Alignment.Center
+        ){
+            // TODO: Stack 'Top' before 'Bottom' btn
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(16.dp)
+            ){
+                Button(onClick = {
+                    displayText = "TOP Button Clicked"
+                },
+                    modifier = Modifier
+                        .width(ButtonWidth)
+                        .height(ButtonHeight),
+                    colors = ButtonDefaults.buttonColors(
+                        // set button and its text color
+                        Color(NavigationBtnColor), // bg Color
+                        Color(TextColor) // txt Color
+                    )
+                ){
+                    Text("Top ↑",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.height(46.dp))
+                Button(onClick = {
+                    displayText = "BOTTOM Button Clicked"
+                },
+                    modifier = Modifier
+                        .width(ButtonWidth)
+                        .height(ButtonHeight),
+                    colors = ButtonDefaults.buttonColors(
+                        // set button and its text color
+                        Color(NavigationBtnColor), // bg Color
+                        Color(TextColor) // txt Color
+                    )
+                ){
+                    Text("Bottom ↓",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                }
             }
-            DirectionalButton("↓") {
-                // Show toast when down button is pressed
-                Toast.makeText(context, "Down pressed", Toast.LENGTH_SHORT).show()
-            }
-            DirectionalButton("→") {
-                // Show toast when right button is pressed
-                Toast.makeText(context, "Right pressed", Toast.LENGTH_SHORT).show()
+        }
+
+        Spacer(modifier = Modifier.height(16.dp)) // space between
+
+        // TODO: add 'right' btn & color
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            contentAlignment = Alignment.Center
+        ){
+            Button(onClick = {
+                displayText = "RIGHT Button Clicked"
+            },
+                modifier = Modifier
+                    .width(ButtonWidth)
+                    .height(ButtonHeight)
+                    .padding(1.dp),
+                colors = ButtonDefaults.buttonColors(
+                    // set button and its text color
+                    Color(NavigationBtnColor), // bg Color
+                    Color(TextColor) // txt Color
+                )
+            ){
+                Text("Right →",fontSize = FontSize, fontWeight = FontWeight.Bold)
             }
         }
     }
 }
 
-// A composable function for the directional buttons (left, right, up, down)
-@Composable
-fun DirectionalButton(direction: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,  // Action to be performed when the button is clicked
-        modifier = Modifier
-            .padding(10.dp)  // Add some space around each button
-            .width(80.dp)  // Set width of each button
-            .height(80.dp)  // Set height of each button
-            .background(Color(0xFF6200EE)),  // Set a purple background color
-    ) {
-        // Correct usage of Text composable, passing a String (direction) parameter
-        Text(
-            text = direction,  // The text on each button (like "←", "↑", "→", "↓")
-            color = Color.White,  // Set the text color to white
-        )
-    }
-}
+
+// UI Standards
+// font size - readability: 20.sp
+// font weight - clarity: FontWeight.Bold
+// btn height - minimum target size: height(48.dp)
+// padding - spacing/usability: 16.dp
