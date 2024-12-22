@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,17 +43,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-
-const val MonitorBgColor = 0xFF4B4F54// smoke gray
-const val MonitorBorderColor = 0xFF333333 // soft black
-//const val TextColor = 0xFFF8F8F8 // off-white
-const val TextColor = 0xFF212529 // dark gray
-const val ManipulatorBtnColor = 0xFF3498DB  // sky blue
+val MonitorFontSize = 26.sp
+const val MonitorBgColor = 0xFF212121 //-> dark gray
+//const val MonitorBorderColor = 0xFF333333 // soft black
+const val MonitorTextColor = 0xFFF8F8F8 // off-white
+const val TextColor = 0xFF212529 // dark gray // OxFF000000
+const val ManipulatorBtnColor = 0xFF007BFF// 0xFF3498DB  // sky blue
 const val ElevationBtnColor = 0xFF1ABC9C // soft green
 const val NavigationBtnColor = 0xFFD3D3D3 // light gray
-val FontSize = 20.sp // better readability
+val ManipElevFontSize = 21.sp // readability
+val NavFontSize = 14.sp
 val ButtonWidth = 150.dp
 val ButtonHeight = 50.dp
+
 
 @Preview(showBackground = true)
 @Composable
@@ -65,6 +68,7 @@ fun GreetingPreview() {
 @Composable // the whole app display
 fun DisplayApp() {
     //
+    val displayText = remember { mutableStateOf("Empty") }
     Column(
         modifier = Modifier.fillMaxSize() // use the whole screen size
     ) {
@@ -79,7 +83,7 @@ fun DisplayApp() {
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                ShowMonitor(displayText = "")
+                ShowMonitor(displayText.value) // .value makes it a string
             }
         }
 
@@ -121,7 +125,7 @@ fun DisplayApp() {
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                ShowNavPanel()
+                ShowNavPanel(displayText) // 'displayText' is the 'mutableState<String>'
             }
         }
     }
@@ -148,7 +152,7 @@ fun ShowMonitor(displayText: String){
                 .background(Color(MonitorBgColor)),
             contentAlignment = Alignment.Center // center content
         ) {
-            Text(displayText, color = Color(TextColor))
+            Text(displayText, fontSize = MonitorFontSize ,color = Color(MonitorTextColor), fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -179,12 +183,11 @@ fun ShowManipConsole(){
                         contentColor = Color(TextColor)
                     ),
                     modifier = Modifier
-                        .border(2.dp, Color(ManipulatorBtnColor)) // border color
                         .clip(CircleShape) // Make the button circular
                         .width(ButtonWidth)
                         .height(ButtonHeight)
                 ) {
-                    Text("Grab ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Text("Grab ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(Icons.Default.AddCircle, contentDescription = "Grab")
                 }
             }
@@ -197,18 +200,18 @@ fun ShowManipConsole(){
                         containerColor = Color(ManipulatorBtnColor), // Button background color (soft green)
                         contentColor = Color(TextColor)
                     ), modifier = Modifier
-                        .border(2.dp, Color(ManipulatorBtnColor)) // Border color
                         .clip(CircleShape) // Make the button circular
                         .width(ButtonWidth)
                         .height(ButtonHeight)
                 ) {
-                    Text("Release ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Text("Release ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(Icons.Default.CheckCircle, contentDescription = "Release")
                 }
             }
         }
 }
 
+// TODO: Make button bigger then make button text bigger
 @Composable // show 'Elevation' panel ('Lift' and 'Lower')
 fun ShowElevPanel(){
     Column{
@@ -235,16 +238,11 @@ fun ShowElevPanel(){
                         containerColor = Color(ElevationBtnColor), // button background color (purple)
                         contentColor = Color(TextColor) // Text color (white)
                     ), modifier = Modifier
-                        .border(
-                            2.dp,
-                            Color(ElevationBtnColor)
-                        ) // border with the same color as the background
                         .clip(CircleShape) // Make the button circular
                         .width(ButtonWidth)
                         .height(ButtonHeight)
-//                        .fillMaxWidth() // takes space too much
                 ) {
-                    Text("Lift ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Text("Lift ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(
                         Icons.Default.KeyboardArrowUp,
                         contentDescription = "Lift"
@@ -260,13 +258,11 @@ fun ShowElevPanel(){
                         containerColor = Color(ElevationBtnColor), // button background color (soft green)
                         contentColor = Color(TextColor)
                     ), modifier = Modifier
-                        .border(2.dp, Color(ElevationBtnColor)) // border color
                         .clip(CircleShape) // Make the button circular
                         .width(150.dp)
                         .height(50.dp)
-//                        .fillMaxWidth()
                 ) {
-                    Text("Lower ",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Text("Lower ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(
                         Icons.Default.KeyboardArrowDown,
                         contentDescription = "Lower"
@@ -277,17 +273,16 @@ fun ShowElevPanel(){
     }
 }
 
-// TODO: figure out how text can be display into monitor when btn pressed
 @Composable // show 'Navigation' panel ('Left','Top','Bottom','Right')
-fun ShowNavPanel(){
+fun ShowNavPanel(displayText: MutableState<String>){
     // state to hold value to be display
-    var displayText by remember { mutableStateOf("") }
-    Column(
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = displayText)
-    }
+//    var displayText by remember { mutableStateOf("Empty") }
+//    Column(
+//        verticalArrangement = Arrangement.Top,
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Text(text = displayText)
+//    }
     Row(
         modifier = Modifier
             .fillMaxSize(),
@@ -303,7 +298,7 @@ fun ShowNavPanel(){
         ){
             Button(
                 onClick = {
-                    displayText = "LEFT Button Clicked"
+                    displayText.value = "Move Left"
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(NavigationBtnColor), // button background color (soft green)
@@ -314,7 +309,7 @@ fun ShowNavPanel(){
                     .height(ButtonHeight)
                     .padding(1.dp),
             ) {
-                Text("← Left",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                Text("← Left",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
             }
         }
 
@@ -324,14 +319,14 @@ fun ShowNavPanel(){
                 .weight(1.2f),
             contentAlignment = Alignment.Center
         ){
-            // TODO: Stack 'Top' before 'Bottom' btn
+            // TODO: Consider padding between 'Forward' & 'Backward' btn
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(16.dp)
             ){
                 Button(onClick = {
-                    displayText = "TOP Button Clicked"
+                    displayText.value = "Move Forward"
                 },
                     modifier = Modifier
                         .width(ButtonWidth)
@@ -342,11 +337,11 @@ fun ShowNavPanel(){
                         Color(TextColor) // txt Color
                     )
                 ){
-                    Text("Top ↑",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Text("Forward ↑",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(46.dp))
                 Button(onClick = {
-                    displayText = "BOTTOM Button Clicked"
+                    displayText.value = "Move Backward"
                 },
                     modifier = Modifier
                         .width(ButtonWidth)
@@ -357,7 +352,7 @@ fun ShowNavPanel(){
                         Color(TextColor) // txt Color
                     )
                 ){
-                    Text("Bottom ↓",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                    Text("Backward ↓",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -372,7 +367,7 @@ fun ShowNavPanel(){
             contentAlignment = Alignment.Center
         ){
             Button(onClick = {
-                displayText = "RIGHT Button Clicked"
+                displayText.value = "Move Right"
             },
                 modifier = Modifier
                     .width(ButtonWidth)
@@ -384,7 +379,7 @@ fun ShowNavPanel(){
                     Color(TextColor) // txt Color
                 )
             ){
-                Text("Right →",fontSize = FontSize, fontWeight = FontWeight.Bold)
+                Text("Right →",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
             }
         }
     }
