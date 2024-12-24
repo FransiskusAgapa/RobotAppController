@@ -77,34 +77,55 @@ fun DisplayApp() {
     Column(
         modifier = Modifier.fillMaxSize() // use the whole screen size
     ) {
+        //TODO: Finish 'landscape' view design
         if (isLandscape) { // 'Landscape' view mode
-            // TODO
+            //Monitor
+            //'Monitor' section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth() // use allocated space as much as possible
+                    .weight(1f) // take portion of the space vertically - increase/decrease as needed
+            ){
+                //Box(contentAlignment = Alignment.Center) {
+                ShowMonitor(displayText.value) // .value makes it a string
+                //}
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ){
-                //'Monitor' section
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth() // use allocated space as much as possible
-                        .weight(0.8f) // take portion of the space vertically - increase/decrease as needed
-                ){
-                    Box(contentAlignment = Alignment.Center) {
-                        ShowMonitor(displayText.value) // .value makes it a string
-                    }
-                }
-
-                //'Manipulation' & 'Elevation' section
+                //'Grab' & 'Lift' btn
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(0.8f)
+                        .weight(1f)
                 ){
-                    // TODO
+                    //TODO
+                    Grab(displayText)
+                    Lift(displayText)
                 }
 
-                //'Navigation' section
+                // 'Navigation' section
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1.2f)
+                ){
+                    //TODO
+                    ShowNavPanel(displayText)
+                }
 
+                // 'Release' & 'Lower' btn
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ){
+                    //TODO
+                    Release(displayText)
+                    Lower(displayText)
+                }
             }
         } else { // 'Portrait' view mode
             // 'Monitor' section
@@ -118,7 +139,7 @@ fun DisplayApp() {
                 }
             }
 
-            // 'Manipulation'
+            // 'Manipulation' section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -130,7 +151,7 @@ fun DisplayApp() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Grab(displayText)
-                    Spacer(modifier = Modifier.width(4.dp)) // add spacing between buttons
+                    Spacer(modifier = Modifier.width(32.dp)) // add spacing between buttons
                     Release(displayText)
                 }
             }
@@ -139,7 +160,7 @@ fun DisplayApp() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.3f),
+                    .weight(0.4f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -147,7 +168,7 @@ fun DisplayApp() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Lift(displayText)
-                    Spacer(modifier = Modifier.width(4.dp)) // add spacing between buttons
+                    Spacer(modifier = Modifier.width(32.dp)) // add spacing between buttons
                     Lower(displayText)
                 }
             }
@@ -156,7 +177,7 @@ fun DisplayApp() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .weight(1.2f)
             ) {
                 ShowNavPanel(displayText) // 'displayText' is the 'mutableState<String>'
             }
@@ -315,7 +336,7 @@ fun ShowNavPanel(displayText: MutableState<String>) {
                     contentColor = Color(TextColor)
                 ),
                 modifier = Modifier
-                    .fillMaxWidth( 0.37f)
+                    .fillMaxWidth(0.37f)
                     .height(NavButtonHeight)
             ) {
                 Text("← Left",
@@ -362,9 +383,6 @@ fun ShowNavPanel(displayText: MutableState<String>) {
         }
     }
 }
-
-// Btn shape
-
 
 // UI Standards
 // font size - readability: 20.sp
