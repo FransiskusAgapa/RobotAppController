@@ -1,5 +1,6 @@
 package com.example.demorobocontrollerapp
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,10 +44,10 @@ import com.example.demorobocontrollerapp.ui.theme.DemoRoboControllerAppTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalConfiguration
 
 val MonitorFontSize = 32.sp
 const val MonitorBgColor = 0xFF212121 //-> dark gray
-//const val MonitorBorderColor = 0xFF333333 // soft black
 const val MonitorTextColor = 0xFFF8F8F8 // off-white
 const val TextColor = 0xFF212529 // dark gray // OxFF000000
 const val ManipBtnColor = 0xFF007BFF// 0xFF3498DB  // sky blue
@@ -69,65 +71,89 @@ fun GreetingPreview() {
 
 @Composable // the whole app display
 fun DisplayApp() {
-    //
+    val configuration = LocalConfiguration.current // check view mode
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val displayText = remember { mutableStateOf("Welcome!\nCommand Your Lifter With Ease") }
     Column(
         modifier = Modifier.fillMaxSize() // use the whole screen size
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth() // use allocated space as much as possible
-                .weight(1f) // take 1/3 of the vertical space
-        ) {
-            Box(
+        if (isLandscape) { // 'Landscape' view mode
+            // TODO
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                ShowMonitor(displayText.value) // .value makes it a string
-            }
-        }
+            ){
+                //'Monitor' section
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth() // use allocated space as much as possible
+                        .weight(0.8f) // take portion of the space vertically - increase/decrease as needed
+                ){
+                    Box(contentAlignment = Alignment.Center) {
+                        ShowMonitor(displayText.value) // .value makes it a string
+                    }
+                }
 
-        // 'Manipulation' & 'Elevation' column
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            // 'Manipulation
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                ShowManipConsole()
-            }
-            // 'Elevation'
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                ShowElevPanel()
-            }
-        }
+                //'Manipulation' & 'Elevation' section
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.8f)
+                ){}
 
-        //
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            Box(
+                //'Navigation' section
+            }
+        } else { // 'Portrait' view mode
+            // 'Monitor' section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth() // use allocated space as much as possible
+                    .weight(0.8f) // take portion of the space vertically - increase/decrease as needed
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    ShowMonitor(displayText.value) // .value makes it a string
+                }
+            }
+
+            // 'Manipulation' & 'Elevation' section
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
+                    .weight(0.8f)
             ) {
-                ShowNavPanel(displayText) // 'displayText' is the 'mutableState<String>'
+                // 'Manipulation'
+                Box(
+                    modifier = Modifier
+                       .weight(0.1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ShowManipConsole(displayText)
+                }
+
+                // 'Elevation'
+                Box(
+                    modifier = Modifier
+                        .weight(0.1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ShowElevPanel(displayText)
+                }
+            }
+
+            // 'Navigation' section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1.2f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ShowNavPanel(displayText) // 'displayText' is the 'mutableState<String>'
+                }
             }
         }
     }
@@ -154,13 +180,17 @@ fun ShowMonitor(displayText: String){
                 .background(Color(MonitorBgColor)),
             contentAlignment = Alignment.Center // center content
         ) {
-            Text(displayText, fontSize = MonitorFontSize ,color = Color(MonitorTextColor), fontWeight = FontWeight.Bold)
+            Text(displayText, fontSize = MonitorFontSize ,
+                color = Color(MonitorTextColor),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center) // center text horizontally & vertically
+            )
         }
     }
 }
 
 @Composable // Show 'Manipulator' console ('Grab' and 'Release')
-fun ShowManipConsole(){
+fun ShowManipConsole(displayText: MutableState<String>){
 //    Column{
 //        Box(
 //            modifier = Modifier
@@ -179,7 +209,7 @@ fun ShowManipConsole(){
             // 'Grab' btn
             Box {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { displayText.value = "Grabbing Item..." },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(ManipBtnColor), // Button background color (soft green)
                         contentColor = Color(TextColor)
@@ -197,7 +227,7 @@ fun ShowManipConsole(){
             // 'Release' btn
             Box {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { displayText.value = "Releasing Item..." },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(ManipBtnColor), // Button background color (soft green)
                         contentColor = Color(TextColor)
@@ -215,17 +245,8 @@ fun ShowManipConsole(){
 
 // TODO: Make button bigger then make button text bigger
 @Composable // show 'Elevation' panel ('Lift' and 'Lower')
-fun ShowElevPanel(){
+fun ShowElevPanel(displayText: MutableState<String>){
     Column{
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth() // makes the Box take up the full width of its parent container
-//                .padding(16.dp),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Text("Elevation Control Section")
-//        }
-
         // Lift-Lower
         Row(
             modifier = Modifier
@@ -235,12 +256,12 @@ fun ShowElevPanel(){
             // 'Lift' btn
             Box {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { displayText.value = "Lifting Item..." },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(ElevBtnColor), // button background color (purple)
-                        contentColor = Color(TextColor) // Text color (white)
+                        contentColor = Color(TextColor) // text color (white)
                     ), modifier = Modifier
-                        .clip(CircleShape) // Make the button circular
+                        .clip(CircleShape) // make the button circular
                         .width(ManipElevButtonWidth)
                         .height(ManipElevButtonHeight)
                 ) {
@@ -255,7 +276,7 @@ fun ShowElevPanel(){
             // 'Lower' btn
             Box {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { displayText.value = "Lowering Item..." },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(ElevBtnColor), // button background color (soft green)
                         contentColor = Color(TextColor)
@@ -287,48 +308,51 @@ fun ShowNavPanel(displayText: MutableState<String>) {
         // 'Forward' button
         Button(
             onClick = {
-                displayText.value = "Move Forward"
+                displayText.value = "Moving Forward..."
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(NavBtnColor),
                 contentColor = Color(TextColor)
             ),
             modifier = Modifier
-                .fillMaxWidth(0.4f) // Take 50% of the screen width
+                .fillMaxWidth(0.4f) // Take 40% of the screen width for landscape view, 20% for portrait
                 .height(NavButtonHeight)
                 .width(ForBacButtonWidth)
         ) {
-            Text("Forward ↑", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
+            Text("Forward ↑",
+                fontSize = NavFontSize,
+                fontWeight = FontWeight.Bold)
         }
 
         // 'Left' & 'Right' buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween, // Distribute buttons evenly horizontally
+            horizontalArrangement = Arrangement.SpaceBetween , // distribute buttons evenly horizontally
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 'Left' button
             Button(
                 onClick = {
-                    displayText.value = "Move To The Left"
+                    displayText.value = "Moving Left..."
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(NavBtnColor),
                     contentColor = Color(TextColor)
                 ),
                 modifier = Modifier
-                    .fillMaxWidth(0.37f)
+                    .fillMaxWidth( 0.37f)
                     .height(NavButtonHeight)
-                    //.width(LefRigButtonWidth)
             ) {
-                Text("← Left", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
+                Text("← Left",
+                    fontSize = NavFontSize,
+                    fontWeight = FontWeight.Bold)
             }
 
             // 'Right' button
             Button(
                 onClick = {
-                    displayText.value = "Move To The Right"
+                    displayText.value = "Moving Right..."
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(NavBtnColor),
@@ -337,31 +361,33 @@ fun ShowNavPanel(displayText: MutableState<String>) {
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
                     .height(NavButtonHeight)
-                    //.width(LefRigButtonWidth)
             ) {
-                Text("Right →", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
+                Text("Right →",
+                    fontSize = NavFontSize,
+                    fontWeight = FontWeight.Bold)
             }
         }
 
         // 'Backward' button
         Button(
             onClick = {
-                displayText.value = "Move Backward"
+                displayText.value = "Moving Backward..."
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(NavBtnColor),
                 contentColor = Color(TextColor)
             ),
             modifier = Modifier
-                .fillMaxWidth(0.4f) // Take 50% of the screen width
+                .fillMaxWidth(0.42f) // percentage % of the screen width
                 .height(NavButtonHeight)
                 .width(ForBacButtonWidth)
         ) {
-            Text("Backward ↓", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
+            Text("Backward ↓",
+                fontSize = NavFontSize,
+                fontWeight = FontWeight.Bold)
         }
     }
 }
-
 
 // UI Standards
 // font size - readability: 20.sp
