@@ -73,7 +73,7 @@ fun GreetingPreview() {
 fun DisplayApp() {
     val configuration = LocalConfiguration.current // check view mode
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val displayText = remember { mutableStateOf("Welcome!\nCommand Your Lifter With Ease") }
+    val displayText = remember { mutableStateOf("Hi, Let's Lift With Ease") }
     Column(
         modifier = Modifier.fillMaxSize() // use the whole screen size
     ) {
@@ -99,44 +99,56 @@ fun DisplayApp() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.8f)
-                ){}
+                ){
+                    // TODO
+                }
 
                 //'Navigation' section
+
             }
         } else { // 'Portrait' view mode
             // 'Monitor' section
             Column(
                 modifier = Modifier
                     .fillMaxWidth() // use allocated space as much as possible
-                    .weight(0.8f) // take portion of the space vertically - increase/decrease as needed
+                    .weight(0.7f) // take portion of the space vertically - increase/decrease as needed
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     ShowMonitor(displayText.value) // .value makes it a string
                 }
             }
 
-            // 'Manipulation' & 'Elevation' section
+            // 'Manipulation'
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.8f)
+                    .weight(0.4f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 'Manipulation'
-                Box(
-                    modifier = Modifier
-                       .weight(0.1f),
-                    contentAlignment = Alignment.Center
+                Row(horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ShowManipConsole(displayText)
+                    Grab(displayText)
+                    Spacer(modifier = Modifier.width(4.dp)) // add spacing between buttons
+                    Release(displayText)
                 }
+            }
 
-                // 'Elevation'
-                Box(
-                    modifier = Modifier
-                        .weight(0.1f),
-                    contentAlignment = Alignment.Center
+            // 'Elevation' section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.3f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ShowElevPanel(displayText)
+                    Lift(displayText)
+                    Spacer(modifier = Modifier.width(4.dp)) // add spacing between buttons
+                    Lower(displayText)
                 }
             }
 
@@ -144,23 +156,16 @@ fun DisplayApp() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1.2f)
+                    .weight(1f)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    ShowNavPanel(displayText) // 'displayText' is the 'mutableState<String>'
-                }
+                ShowNavPanel(displayText) // 'displayText' is the 'mutableState<String>'
             }
         }
     }
 }
 
 @Composable
-fun ShowMonitor(displayText: String){
+fun ShowMonitor(displayText: String){ //
     Column(
         // background
         modifier = Modifier
@@ -189,111 +194,80 @@ fun ShowMonitor(displayText: String){
     }
 }
 
-@Composable // Show 'Manipulator' console ('Grab' and 'Release')
-fun ShowManipConsole(displayText: MutableState<String>){
-//    Column{
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth() // makes the Box take up the full width of its parent container
-//                .padding(16.dp),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Text("Grip Control Section")
-//        }
-
-        Row(
-            modifier =
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly // ensures the buttons are spaced evenly){
-        ) {
-            // 'Grab' btn
-            Box {
-                Button(
-                    onClick = { displayText.value = "Grabbing Item..." },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ManipBtnColor), // Button background color (soft green)
-                        contentColor = Color(TextColor)
-                    ),
-                    modifier = Modifier
-                        .clip(CircleShape) // Make the button circular
-                        .width(ManipElevButtonWidth)
-                        .height(ManipElevButtonHeight)
-                ) {
-                    Text("Grab ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                    Icon(Icons.Default.AddCircle, contentDescription = "Grab")
-                }
+@Composable
+fun Grab(displayText: MutableState<String>) { // 'Grab'
+            Button(
+                onClick = { displayText.value = "Grabbing Item..." },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(ManipBtnColor), // button background color (soft green)
+                    contentColor = Color(TextColor)
+                ),
+                modifier = Modifier
+                    .clip(CircleShape) // make the button circular
+                    .width(ManipElevButtonWidth)
+                    .height(ManipElevButtonHeight)
+            ) {
+                Text("Grab ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+                Icon(Icons.Default.AddCircle, contentDescription = "Grab")
             }
-
-            // 'Release' btn
-            Box {
-                Button(
-                    onClick = { displayText.value = "Releasing Item..." },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ManipBtnColor), // Button background color (soft green)
-                        contentColor = Color(TextColor)
-                    ), modifier = Modifier
-                        .clip(CircleShape) // Make the button circular
-                        .width(ManipElevButtonWidth)
-                        .height(ManipElevButtonHeight)
-                ) {
-                    Text("Release ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                    Icon(Icons.Default.CheckCircle, contentDescription = "Release")
-                }
-            }
-        }
 }
 
-// TODO: Make button bigger then make button text bigger
-@Composable // show 'Elevation' panel ('Lift' and 'Lower')
-fun ShowElevPanel(displayText: MutableState<String>){
-    Column{
-        // Lift-Lower
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            // 'Lift' btn
-            Box {
-                Button(
-                    onClick = { displayText.value = "Lifting Item..." },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ElevBtnColor), // button background color (purple)
-                        contentColor = Color(TextColor) // text color (white)
-                    ), modifier = Modifier
-                        .clip(CircleShape) // make the button circular
-                        .width(ManipElevButtonWidth)
-                        .height(ManipElevButtonHeight)
-                ) {
-                    Text("Lift ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                    Icon(
-                        Icons.Default.KeyboardArrowUp,
-                        contentDescription = "Lift"
-                    )
-                }
+@Composable
+fun Release(displayText: MutableState<String>){ // 'Release'
+    // 'Release' btn
+            Button(
+                onClick = { displayText.value = "Releasing Item..." },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(ManipBtnColor), // button background color (soft green)
+                    contentColor = Color(TextColor)
+                ), modifier = Modifier
+                    .clip(CircleShape) // make the button circular
+                    .width(ManipElevButtonWidth)
+                    .height(ManipElevButtonHeight)
+            ) {
+                Text("Release ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+                Icon(Icons.Default.CheckCircle, contentDescription = "Release")
             }
+}
 
-            // 'Lower' btn
-            Box {
-                Button(
-                    onClick = { displayText.value = "Lowering Item..." },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ElevBtnColor), // button background color (soft green)
-                        contentColor = Color(TextColor)
-                    ), modifier = Modifier
-                        .clip(CircleShape) // Make the button circular
-                        .width(ManipElevButtonWidth)
-                        .height(ManipElevButtonHeight)
-                ) {
-                    Text("Lower ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                    Icon(
-                        Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Lower"
-                    )
-                }
+@Composable
+fun Lift(displayText: MutableState<String>) { // 'Lift' btn
+            Button(
+                onClick = { displayText.value = "Lifting Item..." },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(ElevBtnColor), // button background color (purple)
+                    contentColor = Color(TextColor) // text color (white)
+                ), modifier = Modifier
+                    .clip(CircleShape) // make the button circular
+                    .width(ManipElevButtonWidth)
+                    .height(ManipElevButtonHeight)
+            ) {
+                Text("Lift ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+                Icon(
+                    Icons.Default.KeyboardArrowUp,
+                    contentDescription = "Lift"
+                )
             }
-        }
-    }
+}
+
+@Composable
+fun Lower(displayText: MutableState<String>){
+            Button(
+                onClick = { displayText.value = "Lowering Item..." },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(ElevBtnColor), // button background color (soft green)
+                    contentColor = Color(TextColor)
+                ), modifier = Modifier
+                    .clip(CircleShape) // Make the button circular
+                    .width(ManipElevButtonWidth)
+                    .height(ManipElevButtonHeight)
+            ) {
+                Text("Lower ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+                Icon(
+                    Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Lower"
+                )
+            }
 }
 
 @Composable
@@ -301,7 +275,7 @@ fun ShowNavPanel(displayText: MutableState<String>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(8.dp),
         verticalArrangement = Arrangement.SpaceEvenly, // Distribute buttons evenly vertically
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -388,6 +362,9 @@ fun ShowNavPanel(displayText: MutableState<String>) {
         }
     }
 }
+
+// Btn shape
+
 
 // UI Standards
 // font size - readability: 20.sp
