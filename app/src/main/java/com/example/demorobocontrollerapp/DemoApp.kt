@@ -43,19 +43,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val MonitorFontSize = 26.sp
+val MonitorFontSize = 32.sp
 const val MonitorBgColor = 0xFF212121 //-> dark gray
 //const val MonitorBorderColor = 0xFF333333 // soft black
 const val MonitorTextColor = 0xFFF8F8F8 // off-white
 const val TextColor = 0xFF212529 // dark gray // OxFF000000
-const val ManipulatorBtnColor = 0xFF007BFF// 0xFF3498DB  // sky blue
-const val ElevationBtnColor = 0xFF1ABC9C // soft green
-const val NavigationBtnColor = 0xFFD3D3D3 // light gray
+const val ManipBtnColor = 0xFF007BFF// 0xFF3498DB  // sky blue
+const val ElevBtnColor = 0xFF1ABC9C // soft green
 val ManipElevFontSize = 21.sp // readability
-val NavFontSize = 14.sp
-val ButtonWidth = 150.dp
-val ButtonHeight = 50.dp
-
+val ManipElevButtonWidth = 160.dp
+val ManipElevButtonHeight = 50.dp
+val NavFontSize = 21.sp // 'nav' = 'navigation'
+const val NavBtnColor = 0xFFD3D3D3 // light gray
+val ForBacButtonWidth = 200.dp // 'Forward' , 'Backward' btn's width
+val LefRigButtonWidth = 300.dp // 'Left' , 'Right' btn's width
+val NavButtonHeight = 50.dp
 
 @Preview(showBackground = true)
 @Composable
@@ -68,7 +70,7 @@ fun GreetingPreview() {
 @Composable // the whole app display
 fun DisplayApp() {
     //
-    val displayText = remember { mutableStateOf("Empty") }
+    val displayText = remember { mutableStateOf("Welcome!\nCommand Your Lifter With Ease") }
     Column(
         modifier = Modifier.fillMaxSize() // use the whole screen size
     ) {
@@ -179,13 +181,13 @@ fun ShowManipConsole(){
                 Button(
                     onClick = { /*TODO*/ },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ManipulatorBtnColor), // Button background color (soft green)
+                        containerColor = Color(ManipBtnColor), // Button background color (soft green)
                         contentColor = Color(TextColor)
                     ),
                     modifier = Modifier
                         .clip(CircleShape) // Make the button circular
-                        .width(ButtonWidth)
-                        .height(ButtonHeight)
+                        .width(ManipElevButtonWidth)
+                        .height(ManipElevButtonHeight)
                 ) {
                     Text("Grab ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(Icons.Default.AddCircle, contentDescription = "Grab")
@@ -197,12 +199,12 @@ fun ShowManipConsole(){
                 Button(
                     onClick = { /*TODO*/ },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ManipulatorBtnColor), // Button background color (soft green)
+                        containerColor = Color(ManipBtnColor), // Button background color (soft green)
                         contentColor = Color(TextColor)
                     ), modifier = Modifier
                         .clip(CircleShape) // Make the button circular
-                        .width(ButtonWidth)
-                        .height(ButtonHeight)
+                        .width(ManipElevButtonWidth)
+                        .height(ManipElevButtonHeight)
                 ) {
                     Text("Release ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(Icons.Default.CheckCircle, contentDescription = "Release")
@@ -235,12 +237,12 @@ fun ShowElevPanel(){
                 Button(
                     onClick = { /*TODO*/ },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ElevationBtnColor), // button background color (purple)
+                        containerColor = Color(ElevBtnColor), // button background color (purple)
                         contentColor = Color(TextColor) // Text color (white)
                     ), modifier = Modifier
                         .clip(CircleShape) // Make the button circular
-                        .width(ButtonWidth)
-                        .height(ButtonHeight)
+                        .width(ManipElevButtonWidth)
+                        .height(ManipElevButtonHeight)
                 ) {
                     Text("Lift ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(
@@ -255,12 +257,12 @@ fun ShowElevPanel(){
                 Button(
                     onClick = { /*TODO*/ },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(ElevationBtnColor), // button background color (soft green)
+                        containerColor = Color(ElevBtnColor), // button background color (soft green)
                         contentColor = Color(TextColor)
                     ), modifier = Modifier
                         .clip(CircleShape) // Make the button circular
-                        .width(150.dp)
-                        .height(50.dp)
+                        .width(ManipElevButtonWidth)
+                        .height(ManipElevButtonHeight)
                 ) {
                     Text("Lower ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
                     Icon(
@@ -273,114 +275,89 @@ fun ShowElevPanel(){
     }
 }
 
-@Composable // show 'Navigation' panel ('Left','Top','Bottom','Right')
-fun ShowNavPanel(displayText: MutableState<String>){
-    // state to hold value to be display
-//    var displayText by remember { mutableStateOf("Empty") }
-//    Column(
-//        verticalArrangement = Arrangement.Top,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Text(text = displayText)
-//    }
-    Row(
+@Composable
+fun ShowNavPanel(displayText: MutableState<String>) {
+    Column(
         modifier = Modifier
-            .fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ){
-        // 'left' btn
-        Box(
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceEvenly, // Distribute buttons evenly vertically
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // 'Forward' button
+        Button(
+            onClick = {
+                displayText.value = "Move Forward"
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(NavBtnColor),
+                contentColor = Color(TextColor)
+            ),
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentAlignment = Alignment.Center // center content
-        ){
+                .fillMaxWidth(0.4f) // Take 50% of the screen width
+                .height(NavButtonHeight)
+                .width(ForBacButtonWidth)
+        ) {
+            Text("Forward ↑", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
+        }
+
+        // 'Left' & 'Right' buttons
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween, // Distribute buttons evenly horizontally
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 'Left' button
             Button(
                 onClick = {
-                    displayText.value = "Move Left"
+                    displayText.value = "Move To The Left"
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(NavigationBtnColor), // button background color (soft green)
+                    containerColor = Color(NavBtnColor),
                     contentColor = Color(TextColor)
                 ),
                 modifier = Modifier
-                    .width(ButtonWidth)
-                    .height(ButtonHeight)
-                    .padding(1.dp),
+                    .fillMaxWidth(0.37f)
+                    .height(NavButtonHeight)
+                    //.width(LefRigButtonWidth)
             ) {
-                Text("← Left",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
+                Text("← Left", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
             }
-        }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1.2f),
-            contentAlignment = Alignment.Center
-        ){
-            // TODO: Consider padding between 'Forward' & 'Backward' btn
-            Column(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp)
-            ){
-                Button(onClick = {
-                    displayText.value = "Move Forward"
+            // 'Right' button
+            Button(
+                onClick = {
+                    displayText.value = "Move To The Right"
                 },
-                    modifier = Modifier
-                        .width(ButtonWidth)
-                        .height(ButtonHeight),
-                    colors = ButtonDefaults.buttonColors(
-                        // set button and its text color
-                        Color(NavigationBtnColor), // bg Color
-                        Color(TextColor) // txt Color
-                    )
-                ){
-                    Text("Forward ↑",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
-                }
-                Spacer(modifier = Modifier.height(46.dp))
-                Button(onClick = {
-                    displayText.value = "Move Backward"
-                },
-                    modifier = Modifier
-                        .width(ButtonWidth)
-                        .height(ButtonHeight),
-                    colors = ButtonDefaults.buttonColors(
-                        // set button and its text color
-                        Color(NavigationBtnColor), // bg Color
-                        Color(TextColor) // txt Color
-                    )
-                ){
-                    Text("Backward ↓",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp)) // space between
-
-        // TODO: add 'right' btn & color
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ){
-            Button(onClick = {
-                displayText.value = "Move Right"
-            },
-                modifier = Modifier
-                    .width(ButtonWidth)
-                    .height(ButtonHeight)
-                    .padding(1.dp),
                 colors = ButtonDefaults.buttonColors(
-                    // set button and its text color
-                    Color(NavigationBtnColor), // bg Color
-                    Color(TextColor) // txt Color
-                )
-            ){
-                Text("Right →",fontSize = NavFontSize, fontWeight = FontWeight.Bold)
+                    containerColor = Color(NavBtnColor),
+                    contentColor = Color(TextColor)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .height(NavButtonHeight)
+                    //.width(LefRigButtonWidth)
+            ) {
+                Text("Right →", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
             }
+        }
+
+        // 'Backward' button
+        Button(
+            onClick = {
+                displayText.value = "Move Backward"
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(NavBtnColor),
+                contentColor = Color(TextColor)
+            ),
+            modifier = Modifier
+                .fillMaxWidth(0.4f) // Take 50% of the screen width
+                .height(NavButtonHeight)
+                .width(ForBacButtonWidth)
+        ) {
+            Text("Backward ↓", fontSize = NavFontSize, fontWeight = FontWeight.Bold)
         }
     }
 }
