@@ -46,15 +46,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalConfiguration
 
+// General setting
+const val TextColor = 0xFF212529 // dark gray // OxFF000000
+
+// Monitor setting
 val MonitorFontSize = 32.sp
 const val MonitorBgColor = 0xFF212121 //-> dark gray
 const val MonitorTextColor = 0xFFF8F8F8 // off-white
-const val TextColor = 0xFF212529 // dark gray // OxFF000000
+
+// Manipulation & Elevation setting
 const val ManipBtnColor = 0xFF007BFF// 0xFF3498DB  // sky blue
 const val ElevBtnColor = 0xFF1ABC9C // soft green
 val ManipElevFontSize = 21.sp // readability
 val ManipElevButtonWidth = 160.dp
 val ManipElevButtonHeight = 50.dp
+
+// Navigation setting
 val NavFontSize = 21.sp // 'nav' = 'navigation'
 const val NavBtnColor = 0xFFD3D3D3 // light gray
 val ForBacButtonWidth = 200.dp // 'Forward' , 'Backward' btn's width
@@ -80,53 +87,66 @@ fun DisplayApp() {
         //TODO: Finish 'landscape' view design
         if (isLandscape) { // 'Landscape' view mode
             //Monitor
-            //'Monitor' section
             Column(
                 modifier = Modifier
                     .fillMaxWidth() // use allocated space as much as possible
-                    .weight(1f) // take portion of the space vertically - increase/decrease as needed
+                    .weight(0.5f) // take portion of the space vertically - increase/decrease as needed
             ){
-                //Box(contentAlignment = Alignment.Center) {
                 ShowMonitor(displayText.value) // .value makes it a string
-                //}
             }
 
-            Row(
+            // Manipulation, Navigation,  Elevation
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth() // use allocated space as much as possible
+                    .weight(1.3f) // take portion of the space vertically - increase/decrease as needed
             ){
-                //'Grab' & 'Lift' btn
-                Column(
+                //Manipulation
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
-                ){
-                    //TODO
+                        .padding(2.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                )
+                {
                     Grab(displayText)
-                    Lift(displayText)
-                }
-
-                // 'Navigation' section
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1.2f)
-                ){
-                    //TODO
-                    ShowNavPanel(displayText)
-                }
-
-                // 'Release' & 'Lower' btn
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ){
-                    //TODO
                     Release(displayText)
+                }
+
+                //Elevation
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                )
+                {
+                    Lift(displayText)
                     Lower(displayText)
                 }
-            }
+
+                //Navigation
+               // Column(modifier = Modifier.fillMaxWidth()) {
+                    //TODO: Fix the Navigation btn
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly, // Distribute items with space between them
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Red) // Ensure the row spans the full width
+                    ) {
+                        Forward(displayText, isLandscape)
+                        // Left button
+                        Left(displayText, isLandscape)
+
+                        // Right button
+                        Right(displayText, isLandscape)
+
+                        Backward(displayText, isLandscape)
+                    }
+
+//                    Backward(displayText, isLandscape)
+               // }
+            } // after this is 'Portrait' view
         } else { // 'Portrait' view mode
             // 'Monitor' section
             Column(
@@ -179,12 +199,14 @@ fun DisplayApp() {
                     .fillMaxWidth()
                     .weight(1.2f)
             ) {
+                //TODO: change this to separate btn call
                 ShowNavPanel(displayText) // 'displayText' is the 'mutableState<String>'
             }
         }
     }
 }
 
+// Monitor
 @Composable
 fun ShowMonitor(displayText: String){ //
     Column(
@@ -200,7 +222,7 @@ fun ShowMonitor(displayText: String){ //
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f) // assign how much space vertically
-                .height(200.dp) // sets the height of the Box to 200dp
+                .height(100.dp) // sets the height of the Box to 200dp
                 .padding(16.dp) // adds padding around the Box (inside space)
                 .border(2.dp, Color(MonitorBgColor)) // to simulate a monitor border
                 .background(Color(MonitorBgColor)),
@@ -215,88 +237,91 @@ fun ShowMonitor(displayText: String){ //
     }
 }
 
+// Manipulation
 @Composable
 fun Grab(displayText: MutableState<String>) { // 'Grab'
-            Button(
-                onClick = { displayText.value = "Grabbing Item..." },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(ManipBtnColor), // button background color (soft green)
-                    contentColor = Color(TextColor)
-                ),
-                modifier = Modifier
-                    .clip(CircleShape) // make the button circular
-                    .width(ManipElevButtonWidth)
-                    .height(ManipElevButtonHeight)
-            ) {
-                Text("Grab ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                Icon(Icons.Default.AddCircle, contentDescription = "Grab")
-            }
+    Button(
+        onClick = { displayText.value = "Grabbing Item..." },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(ManipBtnColor), // button background color (soft green)
+            contentColor = Color(TextColor)
+        ),
+        modifier = Modifier
+            .clip(CircleShape) // make the button circular
+            .width(ManipElevButtonWidth)
+            .height(ManipElevButtonHeight)
+    ) {
+        Text("Grab ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+        Icon(Icons.Default.AddCircle, contentDescription = "Grab")
+    }
 }
 
 @Composable
 fun Release(displayText: MutableState<String>){ // 'Release'
     // 'Release' btn
-            Button(
-                onClick = { displayText.value = "Releasing Item..." },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(ManipBtnColor), // button background color (soft green)
-                    contentColor = Color(TextColor)
-                ), modifier = Modifier
-                    .clip(CircleShape) // make the button circular
-                    .width(ManipElevButtonWidth)
-                    .height(ManipElevButtonHeight)
-            ) {
-                Text("Release ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                Icon(Icons.Default.CheckCircle, contentDescription = "Release")
-            }
+    Button(
+        onClick = { displayText.value = "Releasing Item..." },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(ManipBtnColor), // button background color (soft green)
+            contentColor = Color(TextColor)
+        ), modifier = Modifier
+            .clip(CircleShape) // make the button circular
+            .width(ManipElevButtonWidth)
+            .height(ManipElevButtonHeight)
+    ) {
+        Text("Release ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+        Icon(Icons.Default.CheckCircle, contentDescription = "Release")
+    }
 }
 
+// Elevation
 @Composable
 fun Lift(displayText: MutableState<String>) { // 'Lift' btn
-            Button(
-                onClick = { displayText.value = "Lifting Item..." },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(ElevBtnColor), // button background color (purple)
-                    contentColor = Color(TextColor) // text color (white)
-                ), modifier = Modifier
-                    .clip(CircleShape) // make the button circular
-                    .width(ManipElevButtonWidth)
-                    .height(ManipElevButtonHeight)
-            ) {
-                Text("Lift ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                Icon(
-                    Icons.Default.KeyboardArrowUp,
-                    contentDescription = "Lift"
-                )
-            }
+    Button(
+        onClick = { displayText.value = "Lifting Item..." },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(ElevBtnColor), // button background color (purple)
+            contentColor = Color(TextColor) // text color (white)
+        ), modifier = Modifier
+            .clip(CircleShape) // make the button circular
+            .width(ManipElevButtonWidth)
+            .height(ManipElevButtonHeight)
+    ) {
+        Text("Lift ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+        Icon(
+            Icons.Default.KeyboardArrowUp,
+            contentDescription = "Lift"
+        )
+    }
 }
 
 @Composable
 fun Lower(displayText: MutableState<String>){
-            Button(
-                onClick = { displayText.value = "Lowering Item..." },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(ElevBtnColor), // button background color (soft green)
-                    contentColor = Color(TextColor)
-                ), modifier = Modifier
-                    .clip(CircleShape) // Make the button circular
-                    .width(ManipElevButtonWidth)
-                    .height(ManipElevButtonHeight)
-            ) {
-                Text("Lower ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
-                Icon(
-                    Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Lower"
-                )
-            }
+    Button(
+        onClick = { displayText.value = "Lowering Item..." },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(ElevBtnColor), // button background color (soft green)
+            contentColor = Color(TextColor)
+        ), modifier = Modifier
+            .clip(CircleShape) // Make the button circular
+            .width(ManipElevButtonWidth)
+            .height(ManipElevButtonHeight)
+    ) {
+        Text("Lower ",fontSize = ManipElevFontSize, fontWeight = FontWeight.Bold)
+        Icon(
+            Icons.Default.KeyboardArrowDown,
+            contentDescription = "Lower"
+        )
+    }
 }
 
+// Navigation
 @Composable
 fun ShowNavPanel(displayText: MutableState<String>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp),
+            .padding(4.dp),
         verticalArrangement = Arrangement.SpaceEvenly, // Distribute buttons evenly vertically
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -384,8 +409,119 @@ fun ShowNavPanel(displayText: MutableState<String>) {
     }
 }
 
-// UI Standards
-// font size - readability: 20.sp
-// font weight - clarity: FontWeight.Bold
-// btn height - minimum target size: height(48.dp)
-// padding - spacing/usability: 16.dp
+@Composable
+fun Forward(displayText: MutableState<String>,isLandscape : Boolean) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(2.dp),
+        verticalArrangement = Arrangement.SpaceEvenly, // Distribute buttons evenly vertically
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // 'Forward' button
+        Button(
+            onClick = {
+                displayText.value = "Moving Forward..."
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(NavBtnColor),
+                contentColor = Color(TextColor)
+            ),
+            modifier = Modifier
+                .fillMaxWidth(0.2f) // Take 20% of the screen width for landscape view
+                .height(ManipElevButtonHeight)
+                .width(ManipElevButtonWidth)
+        ) {
+            Text("Forward ↑",
+                fontSize = NavFontSize,
+                fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+fun Backward(displayText: MutableState<String>, isLandscape: Boolean){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        verticalArrangement = Arrangement.Center, // Distribute buttons evenly vertically
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Button(
+            onClick = {
+                displayText.value = "Moving Backward..."
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(NavBtnColor),
+                contentColor = Color(TextColor)
+            ),
+            modifier = Modifier
+                .fillMaxWidth(0.2f)
+                .height(ManipElevButtonHeight)
+                .width(ManipElevButtonWidth)
+        ) {
+            Text("Backward ↓",
+                fontSize = NavFontSize,
+                fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+fun Left(displayText: MutableState<String>, isLandscape: Boolean){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        //verticalArrangement = Arrangement.Center, // Distribute buttons evenly vertically
+        //horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Button(
+            onClick = {
+                displayText.value = "Moving Left..."
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(NavBtnColor),
+                contentColor = Color(TextColor)
+            ),
+            modifier = Modifier
+                .fillMaxWidth(0.2f)
+                .height(ManipElevButtonHeight)
+                .width(ManipElevButtonWidth)
+        ) {
+            Text("← Left",
+                fontSize = NavFontSize,
+                fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+fun Right(displayText: MutableState<String>, isLandscape: Boolean){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        //verticalArrangement = Arrangement.Center, // Distribute buttons evenly vertically
+        //horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Button(
+            onClick = {
+                displayText.value = "Moving Right..."
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(NavBtnColor),
+                contentColor = Color(TextColor)
+            ),
+            modifier = Modifier
+                .fillMaxWidth(0.2f)
+                .height(ManipElevButtonHeight)
+                .width(ManipElevButtonWidth)
+        ) {
+            Text("Right →",
+                fontSize = NavFontSize,
+                fontWeight = FontWeight.Bold)
+        }
+    }
+}
