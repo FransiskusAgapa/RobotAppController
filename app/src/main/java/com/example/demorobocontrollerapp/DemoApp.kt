@@ -99,7 +99,7 @@ fun DisplayApp() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth() // use allocated space as much as possible
-                    .weight(1.3f) // take portion of the space vertically - increase/decrease as needed
+                    .weight(1.4f) // take portion of the space vertically - increase/decrease as needed
             ){
                 //Manipulation
                 Row(
@@ -126,26 +126,39 @@ fun DisplayApp() {
                 }
 
                 //Navigation
-               // Column(modifier = Modifier.fillMaxWidth()) {
-                    //TODO: Fix the Navigation btn
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly, // Distribute items with space between them
-                        modifier = Modifier
+                // - 'Forward' btn
+                Column(modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.Red) // Ensure the row spans the full width
-                    ) {
-                        Forward(displayText, isLandscape)
-                        // Left button
-                        Left(displayText, isLandscape)
+                            .weight(0.8f),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally)
+                {
+                    Forward(displayText, isLandscape)
+                }
 
-                        // Right button
-                        Right(displayText, isLandscape)
+                // - 'Left' & 'Right'
+                Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.8f)
+                        ){
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                Left(displayText, isLandscape)
+                                Right(displayText, isLandscape)
+                            }
+                        }
 
-                        Backward(displayText, isLandscape)
-                    }
-
-//                    Backward(displayText, isLandscape)
-               // }
+                // - 'Backward' btn
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally)
+                {
+                    Backward(displayText, isLandscape)
+                }
             } // after this is 'Portrait' view
         } else { // 'Portrait' view mode
             // 'Monitor' section
@@ -411,14 +424,6 @@ fun ShowNavPanel(displayText: MutableState<String>) {
 
 @Composable
 fun Forward(displayText: MutableState<String>,isLandscape : Boolean) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(2.dp),
-        verticalArrangement = Arrangement.SpaceEvenly, // Distribute buttons evenly vertically
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // 'Forward' button
         Button(
             onClick = {
                 displayText.value = "Moving Forward..."
@@ -436,18 +441,10 @@ fun Forward(displayText: MutableState<String>,isLandscape : Boolean) {
                 fontSize = NavFontSize,
                 fontWeight = FontWeight.Bold)
         }
-    }
 }
 
 @Composable
 fun Backward(displayText: MutableState<String>, isLandscape: Boolean){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp),
-        verticalArrangement = Arrangement.Center, // Distribute buttons evenly vertically
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
         Button(
             onClick = {
                 displayText.value = "Moving Backward..."
@@ -465,18 +462,10 @@ fun Backward(displayText: MutableState<String>, isLandscape: Boolean){
                 fontSize = NavFontSize,
                 fontWeight = FontWeight.Bold)
         }
-    }
 }
 
 @Composable
 fun Left(displayText: MutableState<String>, isLandscape: Boolean){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp),
-        //verticalArrangement = Arrangement.Center, // Distribute buttons evenly vertically
-        //horizontalAlignment = Alignment.CenterHorizontally
-    ){
         Button(
             onClick = {
                 displayText.value = "Moving Left..."
@@ -494,18 +483,10 @@ fun Left(displayText: MutableState<String>, isLandscape: Boolean){
                 fontSize = NavFontSize,
                 fontWeight = FontWeight.Bold)
         }
-    }
 }
 
 @Composable
 fun Right(displayText: MutableState<String>, isLandscape: Boolean){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp),
-        //verticalArrangement = Arrangement.Center, // Distribute buttons evenly vertically
-        //horizontalAlignment = Alignment.CenterHorizontally
-    ){
         Button(
             onClick = {
                 displayText.value = "Moving Right..."
@@ -523,5 +504,4 @@ fun Right(displayText: MutableState<String>, isLandscape: Boolean){
                 fontSize = NavFontSize,
                 fontWeight = FontWeight.Bold)
         }
-    }
 }
