@@ -58,23 +58,24 @@ const val NavBtnColor = 0xFFD3D3D3 // light gray
 //val NavButtonHeight = 50.dp
 const val NavButtonMaxWidth = 0.2f
 
+//use as 'preview'
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     DemoRoboControllerAppTheme {
-        DisplayApp(viewModel = RobotControllerViewModel())
+        DisplayApp(viewModel = RobotControllerViewModel()) // pass in the viewModel class
     }
 }
 
-@Composable // the whole app display
+@Composable // The whole app display
 fun DisplayApp(viewModel: RobotControllerViewModel) {
     val configuration = LocalConfiguration.current // check view mode
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     Column(
         modifier = Modifier.fillMaxSize() // use the whole screen size
     ) {
-        if (isLandscape) { // the start of 'Landscape' view design section
-            //Monitor
+        if (isLandscape) { //'Landscape' view design section
+            //Monitor sections
             Column(
                 modifier = Modifier
                     .fillMaxWidth() // use allocated space as much as possible
@@ -83,13 +84,13 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                 ShowMonitor(viewModel.displayText.value) // .value makes it a string
             }
 
-            // Manipulation, Navigation,  Elevation
+            // Manipulation, Navigation,  Elevation column
             Column(
                 modifier = Modifier
                     .fillMaxWidth() // use allocated space as much as possible
                     .weight(1.4f) // take portion of the space vertically - increase/decrease as needed
             ){
-                //Manipulation
+                //Manipulation ('Grab' & 'Release' buttons)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -101,7 +102,7 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                     Release(viewModel, isLandscape)
                 }
 
-                //Elevation
+                //Elevation ('Lift' & 'Lower' buttons) section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -113,8 +114,7 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                     Lower(viewModel, isLandscape)
                 }
 
-                //Navigation
-                // - 'Forward' btn
+                //Navigation ('Forward','Backward','Left','Right' buttons) section
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.8f),
@@ -124,7 +124,6 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                     Forward(viewModel, isLandscape)
                 }
 
-                // - 'Left' & 'Right'
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.8f)
@@ -138,7 +137,6 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                             }
                         }
 
-                // - 'Backward' btn
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -147,8 +145,8 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                 {
                     Backward(viewModel, isLandscape)
                 }
-            } // the end of 'Landscape' view design section
-        } else { // the start of 'Portrait' view design section
+            }
+        } else { //'Portrait' view design section
             // 'Monitor' section
             Column(
                 modifier = Modifier
@@ -160,7 +158,7 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                 }
             }
 
-            // 'Manipulation' section
+            // Manipulation section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -177,7 +175,7 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                 }
             }
 
-            // 'Elevation' section
+            // Elevation section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -194,7 +192,7 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                 }
             }
 
-            // 'Navigation' section
+            // Navigation section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -202,7 +200,6 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // - 'Forward' btn
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.8f)
@@ -213,7 +210,6 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                     Forward(viewModel, isLandscape)
                 }
 
-                // - 'Left' & 'Right'
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.8f)
@@ -230,7 +226,6 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
                     }
                 }
 
-                // - 'Backward' btn
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.8f).padding(8.dp),
@@ -245,7 +240,7 @@ fun DisplayApp(viewModel: RobotControllerViewModel) {
     }
 }
 
-// Monitor
+// Monitor: display text/action that's taking place/happening
 @Composable
 fun ShowMonitor(displayText: String){ //
     Column(
@@ -276,7 +271,7 @@ fun ShowMonitor(displayText: String){ //
     }
 }
 
-// Manipulation
+// Manipulation: consist of 'Grab' & 'Release' btn
 @Composable
 fun Grab(displayText: RobotControllerViewModel , isLandscape: Boolean) { // 'Grab'
     Button(
@@ -296,8 +291,7 @@ fun Grab(displayText: RobotControllerViewModel , isLandscape: Boolean) { // 'Gra
 }
 
 @Composable
-fun Release(displayText: RobotControllerViewModel, isLandscape: Boolean){ // 'Release'
-    // 'Release' btn
+fun Release(displayText: RobotControllerViewModel, isLandscape: Boolean){
     Button(
         onClick = { displayText.setDisplayText("Releasing Item...") },
         colors = ButtonDefaults.buttonColors(
@@ -313,7 +307,7 @@ fun Release(displayText: RobotControllerViewModel, isLandscape: Boolean){ // 'Re
     }
 }
 
-// Elevation
+// Elevation: consist of 'Lift' & 'Lower' buttons
 @Composable
 fun Lift(displayText: RobotControllerViewModel, isLandscape: Boolean) { // 'Lift' btn
     Button(
@@ -354,7 +348,7 @@ fun Lower(displayText: RobotControllerViewModel, isLandscape: Boolean){
     }
 }
 
-// Navigation
+// Navigation: consists of 'Forward' 'Backward' 'Left' 'Right'
 @Composable
 fun Forward(displayText: RobotControllerViewModel,isLandscape : Boolean) {
         Button(

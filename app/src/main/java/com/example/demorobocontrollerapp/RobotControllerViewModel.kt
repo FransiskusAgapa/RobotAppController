@@ -6,7 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
-// as good practice, this class define and hold data belong to a robot
+// This class define and hold data belong to a robot to keep data state &  prevent data reset when view mode changes
 class RobotControllerViewModel : ViewModel() {
     // Private mutable state (encapsulated)
     private var _messageOnDisplay = mutableStateOf("Hi, let's lift with ease!")
